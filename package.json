@@ -1,0 +1,32 @@
+{
+  "name": "omnibox-reminder",
+  "version": "0.0.0",
+  "description": "omnibox reminder",
+  "main": "''",
+  "scripts": {
+    "w-background": "watchify src/js/background/main.js -o build/js/bg-bundle.js",
+    "w-content-script": "watchify src/js/content-script/main.js -o build/js/cs-bundle.js",
+    "w-simple": "watchify src/js/main.js -o build/js/bundle.js -v",
+    "watch": "npm run w-simple & npm run w-background",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url":  ""
+  },
+  "keywords": [
+    "chrome",
+    "extension",
+    "starter"
+  ],
+  "author": "juanc.jara",
+  "license": "MIT",
+  "dependencies": {
+    "babelify": "^6.3.0"
+  },
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
+  }
+}
