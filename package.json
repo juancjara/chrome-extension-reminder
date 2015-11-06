@@ -2,7 +2,7 @@
   "name": "omnibox-reminder",
   "version": "0.0.0",
   "description": "omnibox reminder",
-  "main": "''",
+  "main": "",
   "scripts": {
     "w-background": "watchify src/js/background/main.js -o build/js/bg-bundle.js",
     "w-content-script": "watchify src/js/content-script/main.js -o build/js/cs-bundle.js",

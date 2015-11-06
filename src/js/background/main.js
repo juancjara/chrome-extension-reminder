@@ -5,36 +5,41 @@ import Alarm from '../chrome-api/alarm';
 import Notification from '../chrome-api/notification';
 import Utils from '../utils';
 
-Notification.title = 'reminder';
+Alarm.setup();
+Notification.title = 'Reminder';
 
-let parseText = function(text) {
+let parseContentFrom = (text) => {
   let parts = text.split(' ');
   parts.shift();
   return parts.join(' ');
 };
 
-let parseTime = function(text) {
+let parseTimeFrom = (text) => {
   return {
     delayInMinutes: Number(text.split(' ')[0])
   };
 };
 
-let handleAlarm = function(message) {
+let handleAlarm = (name, message) => {
   (new Audio('../media/alarm.mp3')).play();
+  Alarm.clear(name);
   Notification.create({message}, () => {});
 };
 
 Omnibox.onChange((text, suggest) => {
   suggest([
-    {content: 'in 10m update', description: 'time | text'}
-  ])
+    {content: '10 alarmName', description: 'time | text'}
+  ]);
 });
 
 Omnibox.onSubmit((text) => {
   text = text.trim();
-  let reminderName = parseText(text);
-  Alarm.set('reminder', parseTime(text),
-            Utils.partial(handleAlarm, reminderName));
-  let message = 'Alarm set';
+  let content = parseContentFrom(text);
+  let alarmName = Date.now().toString();
+
+  Alarm.create(alarmName, parseTimeFrom(text),
+               Utils.partial(handleAlarm, alarmName, content));
+
+  let message = `Alarm ${content} set`;
   Notification.create({message}, () => {});
-})
+});

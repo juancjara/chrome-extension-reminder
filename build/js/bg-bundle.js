@@ -21,34 +21,39 @@ var _utils2 = _interopRequireDefault(_utils);
 
 console.log('background script ready!!');
 
-_chromeApiNotification2['default'].title = 'reminder';
+_chromeApiAlarm2['default'].setup();
+_chromeApiNotification2['default'].title = 'Reminder';
 
-var parseText = function parseText(text) {
+var parseContentFrom = function parseContentFrom(text) {
   var parts = text.split(' ');
   parts.shift();
   return parts.join(' ');
 };
 
-var parseTime = function parseTime(text) {
+var parseTimeFrom = function parseTimeFrom(text) {
   return {
     delayInMinutes: Number(text.split(' ')[0])
   };
 };
 
-var handleAlarm = function handleAlarm(message) {
+var handleAlarm = function handleAlarm(name, message) {
   new Audio('../media/alarm.mp3').play();
+  _chromeApiAlarm2['default'].clear(name);
   _chromeApiNotification2['default'].create({ message: message }, function () {});
 };
 
 _chromeApiOmnibox2['default'].onChange(function (text, suggest) {
-  suggest([{ content: 'in 10m update', description: 'time | text' }]);
+  suggest([{ content: '10 alarmName', description: 'time | text' }]);
 });
 
 _chromeApiOmnibox2['default'].onSubmit(function (text) {
   text = text.trim();
-  var reminderName = parseText(text);
-  _chromeApiAlarm2['default'].set('reminder', parseTime(text), _utils2['default'].partial(handleAlarm, reminderName));
-  var message = 'Alarm set';
+  var content = parseContentFrom(text);
+  var alarmName = Date.now().toString();
+
+  _chromeApiAlarm2['default'].create(alarmName, parseTimeFrom(text), _utils2['default'].partial(handleAlarm, alarmName, content));
+
+  var message = 'Alarm ' + content + ' set';
   _chromeApiNotification2['default'].create({ message: message }, function () {});
 });
 
@@ -76,8 +81,11 @@ var Alarm = {
     chrome.alarms.clearAll(cb);
   },
 
-  set: function set(name, alarmInfo, fn) {
-    Alarm.create(name, alarmInfo, fn);
+  clear: function clear(name) {
+    chrome.alarms.clear(name);
+  },
+
+  setup: function setup() {
     Alarm.listenAll();
   }
 

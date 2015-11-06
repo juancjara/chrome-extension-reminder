@@ -16,8 +16,11 @@ let Alarm = {
     chrome.alarms.clearAll(cb);
   },
 
-  set(name, alarmInfo, fn) {
-    Alarm.create(name, alarmInfo, fn);
+  clear(name) {
+    chrome.alarms.clear(name);
+  },
+
+  setup() {
     Alarm.listenAll();
   }
 
